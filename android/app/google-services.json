@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994585830613",
+    "project_id": "mappka-208e9",
+    "storage_bucket": "mappka-208e9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994585830613:android:6b8890f49fddf4b2b5ee5c",
+        "android_client_info": {
+          "package_name": "com.example.mappka"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvp-_RWEUyk73HPML-tTweCcZ4RRy0j0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
