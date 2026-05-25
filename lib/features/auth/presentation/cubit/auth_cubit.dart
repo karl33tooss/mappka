@@ -44,12 +44,24 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signUp(String email, String password) async {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required DateTime birthDate,
+  }) async {
     emit(AuthLoading());
-    final result = await _authService.signUpWithEmail(email, password);
+    final result = await _authService.signUpWithEmail(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      birthDate: birthDate,
+    );
     
     if (result == null) {
-      emit(AuthError('Registration error'));
+      emit(AuthError('Registration error.'));
       emit(AuthUnauthenticated());
     }
   }
