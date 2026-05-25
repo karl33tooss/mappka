@@ -5,8 +5,10 @@ import 'firebase_options.dart';
 
 import 'core/theme/app_colors.dart';
 import 'core/router/app_router.dart';
+import 'core/services/location_service.dart';
 import 'features/auth/data/auth_service.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/map/presentation/cubit/map_cubit.dart'; // Імпортуємо новий Cubit
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,11 +19,14 @@ void main() async {
 
   final authService = AuthService();
   final authCubit = AuthCubit(authService);
+  
+  final locationService = LocationService();
 
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider.value(value: authCubit),
+        BlocProvider(create: (context) => MapCubit(locationService)),
       ],
       child: MappkaApp(authCubit: authCubit),
     ),
@@ -36,6 +41,7 @@ class MappkaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appRouter = AppRouter(authCubit).router;
+
     return MaterialApp.router(
       title: 'Mappka',
       debugShowCheckedModeBanner: false,

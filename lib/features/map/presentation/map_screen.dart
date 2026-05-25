@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../auth/data/auth_service.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/config/app_config.dart';
+import '../../auth/data/auth_service.dart';
+import 'cubit/map_cubit.dart';
+import 'cubit/map_state.dart';
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
+
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  final MapController _mapController = MapController();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<MapCubit>().startTracking();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +31,7 @@ class MapScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        title: const Text('Mappka', style: TextStyle(color: AppColors.textMain)),
+        title: const Text('Mappka', style: AppTextStyles.heading1),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: AppColors.primary),
@@ -22,11 +41,78 @@ class MapScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'Here will be our map 🗺️',
-          style: AppTextStyles.heading1,
-        ),
+      body: BlocBuilder<MapCubit, MapState>(
+        builder: (context, state) {
+          if (state is MapInitial || state is MapLoading) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
+          }
+
+          if (state is MapError) {
+            return Center(
+              child: Text(
+                state.message,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyInput,
+              ),
+            );
+          }
+          if (state is MapReady) {
+            final position = state.currentPosition;
+            final userLocation = LatLng(position.latitude, position.longitude);
+
+            return Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: userLocation,
+                    initialZoom: 17.0,
+                    minZoom: 10.0,
+                    maxZoom: 20.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://{s}.tile.jawg.io/jawg-matrix/{z}/{x}/{y}{r}.png?access-token=${AppConfig.jawgToken}',
+                      subdomains: const ['a', 'b', 'c', 'd'],
+                      maxNativeZoom: 22,
+                      userAgentPackageName: 'com.example.mappka',
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: userLocation,
+                          width: 40,
+                          height: 40,
+                          child: const Icon(
+                            Icons.my_location,
+                            color: AppColors.primary,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                
+                Positioned(
+                  bottom: 24,
+                  right: 24,
+                  child: FloatingActionButton(
+                    backgroundColor: AppColors.primary,
+                    onPressed: () {
+                      _mapController.move(userLocation, 17.0);
+                    },
+                    child: const Icon(Icons.center_focus_strong, color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
