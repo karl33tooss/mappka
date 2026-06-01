@@ -8,7 +8,7 @@ import 'core/router/app_router.dart';
 import 'core/services/location_service.dart';
 import 'features/auth/data/auth_service.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
-import 'features/map/presentation/cubit/map_cubit.dart'; // Імпортуємо новий Cubit
+import 'features/map/presentation/cubit/map_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
