@@ -40,11 +40,13 @@ class MapCubit extends Cubit<MapState> {
     
     if (initialPosition != null) {
       final unlockedIds = await _dbService.getUnlockedBuildingIds();
-      
+      final totalCount = await _dbService.getTotalBuildingsCount();
+
       emit(MapReady(
         currentPosition: initialPosition,
         unlockedBuildingIds: unlockedIds,
         visibleBuildings: [], 
+        totalBuildingsCount: totalCount,
       ));
     } else {
       emit(MapError('Failed to get location.'));

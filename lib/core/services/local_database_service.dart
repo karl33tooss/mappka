@@ -95,4 +95,11 @@ class LocalDatabaseService {
     final result = await db.query('unlocked_buildings');
     return result.map((row) => row['id'] as String).toList();
   }
+
+  Future<int> getTotalBuildingsCount() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM buildings');
+    int count = result.first['count'] as int? ?? 0;
+    return count;
+  }
 }
