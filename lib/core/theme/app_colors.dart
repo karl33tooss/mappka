@@ -12,4 +12,6 @@ class AppColors {
   static const Color textSecondary = Colors.grey; 
   
   static const Color error = Color(0xFFCF6679); 
+
+static const Color inactive = Color(0xFF9E9E9E);
 }
