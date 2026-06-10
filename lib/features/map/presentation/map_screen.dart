@@ -5,7 +5,6 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/config/app_config.dart';
-import '../../auth/data/auth_service.dart';
 import 'cubit/map_cubit.dart';
 import 'cubit/map_state.dart';
 import '../../weather/presentation/cubit/weather_cubit.dart';
@@ -35,14 +34,6 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         title: const Text('Mappka', style: AppTextStyles.heading1),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: AppColors.primary),
-            onPressed: () async {
-              await AuthService().signOut();
-            },
-          ),
-        ],
       ),
       body: BlocListener<MapCubit, MapState>(
         listenWhen: (previous, current) =>

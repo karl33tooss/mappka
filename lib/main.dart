@@ -12,6 +12,8 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/map/presentation/cubit/map_cubit.dart';
 import 'features/weather/data/weather_api_service.dart';
 import 'features/weather/presentation/cubit/weather_cubit.dart';
+import 'features/quote/data/quote_api_service.dart';
+import 'features/quote/presentation/cubit/quote_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +24,7 @@ void main() async {
   final authCubit = AuthCubit(authService);
   final locationService = LocationService();
   final weatherApiService = WeatherApiService(dioClient);
+  final quoteApiService = QuoteApiService(dioClient);
 
   runApp(
     MultiBlocProvider(
@@ -29,6 +32,7 @@ void main() async {
         BlocProvider.value(value: authCubit),
         BlocProvider(create: (context) => MapCubit(locationService)),
         BlocProvider(create: (context) => WeatherCubit(weatherApiService)),
+        BlocProvider(create: (context) => QuoteCubit(quoteApiService),)
       ],
       child: MappkaApp(authCubit: authCubit),
     ),
