@@ -1,15 +1,16 @@
+import 'package:mappka/features/quote/data/quote_repository.dart';
+
 import 'quote_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/quote_api_service.dart';
 
 class QuoteCubit extends Cubit<QuoteState>{
-  final QuoteApiService _quoteApiService;
-  QuoteCubit(this._quoteApiService) : super(QuoteInitial());
+  final QuoteRepository _repository;
+  QuoteCubit(this._repository) : super(QuoteInitial());
 
   Future<void> fetchQuote() async {
     emit(QuoteLoading());
     try{
-      final quote = await _quoteApiService.getDailyQuote();
+      final quote = await _repository.getQuote();
       emit(QuoteLoaded(quote));
     }
     catch(e){

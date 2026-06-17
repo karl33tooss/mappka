@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'weather_state.dart';
-import '../../data/weather_api_service.dart';
+import '../../data/weather_repository.dart';
 
 class WeatherCubit extends Cubit<WeatherState>{
-  final WeatherApiService _weaterApiService;
-  WeatherCubit(this._weaterApiService) : super(WeatherInitial());
+  final WeatherRepository _weatherRepository;
+  WeatherCubit(this._weatherRepository) : super(WeatherInitial());
 
   Future<void> fetchWeather(double lat, double lon) async{
     emit(WeatherLoading());
     try{
-      final weather = await _weaterApiService.getCurrentWeather(lat, lon);
+      final weather = await _weatherRepository.getWeather(lat, lon);
       emit(WeatherLoaded(weather));
     }
     catch(e){
