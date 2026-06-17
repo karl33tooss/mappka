@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mappka/core/network/dio_client.dart';
+import 'package:mappka/features/quote/data/quote_repository.dart';
+import 'package:mappka/features/weather/data/weather_repository.dart';
 import 'firebase_options.dart';
+import 'package:hive_flutter/adapters.dart';
 
 import 'core/theme/app_colors.dart';
 import 'core/router/app_router.dart';
@@ -14,9 +17,17 @@ import 'features/weather/data/weather_api_service.dart';
 import 'features/weather/presentation/cubit/weather_cubit.dart';
 import 'features/quote/data/quote_api_service.dart';
 import 'features/quote/presentation/cubit/quote_cubit.dart';
+import 'features/quote/data/quote_model.dart';
+import 'features/weather/data/weather_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(QuoteModelAdapter());
+  Hive.registerAdapter(WeatherModelAdapter());
+  await Hive.openBox<QuoteModel>('quote_box');
+  await Hive.openBox<WeatherModel>('weather_box');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final dioClient = DioClient();
@@ -24,15 +35,18 @@ void main() async {
   final authCubit = AuthCubit(authService);
   final locationService = LocationService();
   final weatherApiService = WeatherApiService(dioClient);
+  final weatherRepository = WeatherRepository(weatherApiService);
   final quoteApiService = QuoteApiService(dioClient);
+  final quoteRepository = QuoteRepository(quoteApiService);
+
 
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider.value(value: authCubit),
         BlocProvider(create: (context) => MapCubit(locationService)),
-        BlocProvider(create: (context) => WeatherCubit(weatherApiService)),
-        BlocProvider(create: (context) => QuoteCubit(quoteApiService),)
+        BlocProvider(create: (context) => WeatherCubit(weatherRepository)),
+        BlocProvider(create: (context) => QuoteCubit(quoteRepository)),
       ],
       child: MappkaApp(authCubit: authCubit),
     ),
